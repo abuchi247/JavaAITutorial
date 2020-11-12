@@ -1,6 +1,6 @@
 /*
  * Author:               Abuchi Obiegbu
- * Assignment:           Project Phase 1
+ * Assignment:           Project Phase 2
  * Class:                Artificial Intelligence
  * Copyright (c) 2020 Abuchi Obiegbu
  */
@@ -69,12 +69,25 @@ class Circuit1Objective implements CalculateScore {
         return ran.nextDouble() * (RANGE_MAX - RANGE_MIN) + RANGE_MIN;
     }
 
-    protected static double sigmoid(double x) {
-        return (1/(1 + Math.pow(Math.E, (-1*x))));  // update this function
+    /**
+     * Calculates the sigmoid activation function
+     * @param z value to calculate
+     * @return sigmoid value of z
+     */
+    protected double sigmoid(double z) {
+        return (1/(1 + Math.pow(Math.E, (-1*z))));
     }
 
+    /**
+     * Implements the three feedforward equations to calculate the actual output
+     * @param x1 XOR input
+     * @param x2 XOR input
+     * @param x3 XOR input
+     * @param ws interneuron weights
+     * @return double precision value of y1
+     */
     public double feedforward(double x1, double x2, double x3, double[] ws) {
-        // local variables for w1-w8, b1, b2
+        // local variables to hold w1-w8, b1, b2 values
         double w1 = ws[0];
         double w2 = ws[1];
         double w3 = ws[2];
@@ -86,6 +99,7 @@ class Circuit1Objective implements CalculateScore {
         double b1 = ws[8];
         double b2 = ws[9];
 
+        /* Implements Equations 1, 2 and 3 */
         double h1 = sigmoid(w1 * x1 + w3 * x2 + b1 * 1 + w7 * x3);
         double h2 = sigmoid(w2 * x1 + w4 * x2 + b1 * 1 + w8 * x3);
         double y1 = sigmoid(w5 * h1 + w6 * h2 + b2 * 1);
@@ -93,30 +107,47 @@ class Circuit1Objective implements CalculateScore {
         return y1;
     }
 
+    /**
+     * Calculates the fitness of interneuron weights using the root mean square error
+     * @param ws interneuron weights
+     * @return double precision root mean square error value
+     */
     public double getFitness(double[] ws) {
         double y1 = 0.0;
         double t1;
-        double squareError = 0.0;
+        double squareValue = 0.0;
         double mean = 0.0;
         double root = 0.0;
 
         // This is the encoded column header
         String reportHeader = String.format("%2s %4s %7s %7s %7s %7s","#", "x1", "x2", "x3", "t1", "y1");
 
-        System.out.println(reportHeader);
+        // display only when debug is turned on
+        if (DEBUGGING){
+            System.out.println(reportHeader);
+        }
+
         // loop through all the XOR_INPUTS
         for(int row=0; row < XOR_INPUTS.length; row++) {
+            // cslculate actual output
             y1 = feedforward(XOR_INPUTS[row][0], XOR_INPUTS[row][1], XOR_INPUTS[row][2], ws);
+
+            // ideal output
             t1 = XOR_IDEALS[row][0];
-            // calculate square
-            squareError += square(y1 - t1);
-            System.out.printf("%2d %8.4f %7.4f %7.4f %7.4f %7.4f",
-                    row+1, XOR_INPUTS[row][0], XOR_INPUTS[row][1], XOR_INPUTS[row][2], t1, y1);
-            System.out.println();
+
+            // compute square value
+            squareValue += square(y1 - t1);
+
+            // display only when debug is turned on
+            if (DEBUGGING) {
+                System.out.printf("%2d %8.4f %7.4f %7.4f %7.4f %7.4f",
+                        row+1, XOR_INPUTS[row][0], XOR_INPUTS[row][1], XOR_INPUTS[row][2], t1, y1);
+                System.out.println();
+            }
         }
 
         // calculate mean
-        mean = (squareError / (double)XOR_INPUTS.length);
+        mean = (squareValue / (double)XOR_INPUTS.length);
 
         // calculate root
         root = (double)Math.sqrt(mean);
@@ -124,6 +155,11 @@ class Circuit1Objective implements CalculateScore {
         return root;
     }
 
+    /**
+     * Calculates the square of a number
+     * @param num number input
+     * @return  square of number in double precision
+     */
     public double square(double num) {
         return num * num;
     }
@@ -206,8 +242,15 @@ class Circuit1Objective implements CalculateScore {
             System.out.println(wsValue);
         }
 
+        // instance of Circuit1
         Circuit1Objective objective = new Circuit1Objective();
+
+        // get fitness value
         double fitness = objective.getFitness(ws);
-        System.out.println("fitness = " + fitness);
+
+        // display only when debug is turned on
+        if (DEBUGGING) {
+            System.out.println("fitness = " + fitness);
+        }
     }
 }
