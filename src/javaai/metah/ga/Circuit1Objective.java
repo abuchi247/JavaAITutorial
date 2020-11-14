@@ -75,7 +75,7 @@ class Circuit1Objective implements CalculateScore {
      * @return sigmoid value of z
      */
     protected double sigmoid(double z) {
-        return (1/(1 + Math.pow(Math.E, (-1*z))));
+        return (1/(1 + Math.exp(-1*z)));
     }
 
     /**
@@ -150,7 +150,7 @@ class Circuit1Objective implements CalculateScore {
         mean = (squareValue / (double)XOR_INPUTS.length);
 
         // calculate root
-        root = (double)Math.sqrt(mean);
+        root = Math.sqrt(mean);
 
         return root;
     }
