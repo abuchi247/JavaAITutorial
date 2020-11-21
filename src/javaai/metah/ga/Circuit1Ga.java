@@ -117,15 +117,15 @@ public class Circuit1Ga {
             ga.iteration();
 
             // Get the value of the best solution for predict(x)
-            double y = ga.getError();
+            double fitness = ga.getError();
 
             DoubleArrayGenome best = (DoubleArrayGenome) ga.getBestGenome();
 
-            System.out.printf("%3d %7.4f %4d %82s\n",iteration, y, sameCount, asString(best));
+            System.out.printf("%3d %7.4f %4d %82s\n",iteration, fitness, sameCount, asString(best));
 
             iteration++;
 
-            converged = didConverge(y, ga.getPopulation());
+            converged = didConverge(fitness, ga.getPopulation());
         }
     }
 
